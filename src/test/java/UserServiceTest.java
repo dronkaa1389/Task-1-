@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+
 public class UserServiceTest {
     private final UserService userService = new UserServiceImpl();
 
@@ -40,18 +41,16 @@ public class UserServiceTest {
             userService.dropUsersTable();
             userService.createUsersTable();
             userService.saveUser(testName, testLastName, testAge);
+            List<User> users = userService.getAllUsers();
+            Assert.assertFalse("Список пользователей пуст", users.isEmpty());
+            User user = users.get(0);
 
-            User user = userService.getAllUsers().get(0);
-
-            if (!testName.equals(user.getName())
-                    || !testLastName.equals(user.getLastName())
-                    || testAge != user.getAge()
-            ) {
-                Assert.fail("User был некорректно добавлен в базу данных");
-            }
-
+            Assert.assertEquals("Имя пользователя не совпадает", testName, user.getName());
+            Assert.assertEquals("Фамилия пользователя не совпадает", testLastName, user.getLastName());
+            Assert.assertEquals("Возраст пользователя не совпадает", (Byte) testAge, user.getAge());
         } catch (Exception e) {
-            Assert.fail("Во время тестирования сохранения пользователя произошло исключение\n" + e);
+            e.printStackTrace();
+            Assert.fail("Во время тестирования сохранения пользователя произошло исключение: " + e.getMessage());
         }
     }
 
